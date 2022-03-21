@@ -54,13 +54,13 @@ func (us *UserService) Create(ctx context.Context) ([]*store.User, error) {
 	var users []*store.User
 
 	for _, user := range <-responses {
-		if !us.userStore.IsEmailTaken(user.Email) {
+		if !us.userStore.IsEmailTaken(ctx,user.Email) {
 			hashedPassword, err := encrypt.Hash(user.Password)
 			if err != nil {
 				return nil, err
 			}
 			user.Password = string(hashedPassword)
-			user, err := us.userStore.CreateUser(&user)
+			user, err := us.userStore.CreateUser(ctx, &user)
 			if err != nil {
 				return nil, err
 			}
@@ -88,7 +88,7 @@ func (us *UserService) Create(ctx context.Context) ([]*store.User, error) {
 
 //List users   _
 func (us *UserService) List(ctx context.Context) ([]*store.User, error) {
-	users, err := us.userStore.GetAllUsers()
+	users, err := us.userStore.GetAllUsers(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -96,8 +96,8 @@ func (us *UserService) List(ctx context.Context) ([]*store.User, error) {
 }
 
 //List users   _
-func (us *UserService) GetUser( id string) (*store.User, error) {
-	user, err := us.userStore.Get(id)
+func (us *UserService) GetUser(ctx context.Context, id string) (*store.User, error) {
+	user, err := us.userStore.Get(ctx, id)
 	if err != nil {
 		return nil, err
 	}
@@ -105,8 +105,8 @@ func (us *UserService) GetUser( id string) (*store.User, error) {
 }
 
 //Delete _
-func (us *UserService) DeleteUser( id string) error {
-	err := us.userStore.DeleteUser(id)
+func (us *UserService) DeleteUser(ctx context.Context, id string) error {
+	err := us.userStore.DeleteUser(ctx, id)
 	if err == nil {
 		// Reading file
 		path, err := os.Getwd()
@@ -124,8 +124,8 @@ func (us *UserService) DeleteUser( id string) error {
 }
 
 //Update a User
-func (us *UserService) UpdateUser( req *store.User, id string) error {
-	err := us.userStore.UpdateUser(req, id)
+func (us *UserService) UpdateUser(ctx context.Context, req *store.User, id string) error {
+	err := us.userStore.UpdateUser(ctx, req, id)
 	if err != nil {
 		return err
 	}
@@ -143,15 +143,15 @@ func (us *UserService) UpdateUser( req *store.User, id string) error {
 
 	reader := bufio.NewReader(fd)
 
-		line, _ := reader.ReadString('\n')
-		if err != nil{
-			return err
+	line, _ := reader.ReadString('\n')
+	if err != nil{
+		return err
+	}
+	if len(req.Data) != 0 && req.Data != line{
+		err = ioutil.WriteFile(path + "/files/" + id, []byte(req.Data), 0)
+		if err != nil {
+			panic(err)
 		}
-		if len(req.Data) != 0 && req.Data != line{
-			err = ioutil.WriteFile(path + "/files/" + id, []byte(req.Data), 0)
-			if err != nil {
-				panic(err)
-			}
-		}
+	}
 	return nil
 }

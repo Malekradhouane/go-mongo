@@ -14,8 +14,8 @@ import (
 )
 
 //CreateUser create a user
-func (c *Client) CreateUser(user *User) (*User, error) {
-	_, err := c.Client.Database("user").Collection("users").InsertOne(context.Background(), user)
+func (c *Client) CreateUser(ctx context.Context, user *User) (*User, error) {
+	_, err := c.Client.Database("user").Collection("users").InsertOne(ctx, user)
 	if err != nil {
 		return nil, err
 	}
@@ -23,10 +23,10 @@ func (c *Client) CreateUser(user *User) (*User, error) {
 }
 
 //Authenticate retrieve a user
-func (c *Client) Authenticate( login *api.Login) (*User, error) {
+func (c *Client) Authenticate(ctx context.Context, login *api.Login) (*User, error) {
 	user := new(User)
 	filter := bson.D{{"email", login.Email}}
-	err := c.Client.Database("user").Collection("users").FindOne(context.Background(), filter).Decode(&user)
+	err := c.Client.Database("user").Collection("users").FindOne(ctx, filter).Decode(&user)
 	if err != nil {
 		if gorm.IsRecordNotFoundError(err) {
 			return nil, errs.ErrNoSuchEntity
@@ -42,9 +42,9 @@ func (c *Client) Authenticate( login *api.Login) (*User, error) {
 }
 
 //IsEmailTaken retrieve a user
-func (c *Client) IsEmailTaken( email string) bool {
+func (c *Client) IsEmailTaken(ctx context.Context, email string) bool {
 	filter := bson.D{{"email", email}}
-	cursor, err := c.Client.Database("user").Collection("users").CountDocuments(context.Background(), filter, nil)
+	cursor, err := c.Client.Database("user").Collection("users").CountDocuments(ctx, filter, nil)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -74,10 +74,10 @@ func (c *Client) GetAllUsers(ctx context.Context) ([]*User, error) {
 }
 
 //Get retrieve a user
-func (c *Client) Get( id string) (*User, error) {
+func (c *Client) Get(ctx context.Context, id string) (*User, error) {
 	user := new(User)
 	filter := bson.D{{"id", id}}
-	err := c.Client.Database("user").Collection("users").FindOne(context.Background(), filter).Decode(&user)
+	err := c.Client.Database("user").Collection("users").FindOne(ctx, filter).Decode(&user)
 	if err != nil {
 		if gorm.IsRecordNotFoundError(err) {
 			return nil, errs.ErrNoSuchEntity
@@ -88,10 +88,10 @@ func (c *Client) Get( id string) (*User, error) {
 }
 
 //DeleteUser deletes a user with given ID
-func (c *Client) DeleteUser( id string) error {
+func (c *Client) DeleteUser(ctx context.Context, id string) error {
 	filter := bson.D{{"id", id}}
 	opts := options.Delete().SetCollation(&options.Collation{}) // to specify language-specific rules for string comparison, such as rules for lettercase
-	_, err :=  c.Client.Database("user").Collection("users").DeleteOne(context.Background(), filter, opts)
+	_, err :=  c.Client.Database("user").Collection("users").DeleteOne(ctx, filter, opts)
 	if err != nil {
 		return err
 	}
@@ -99,14 +99,14 @@ func (c *Client) DeleteUser( id string) error {
 }
 
 //Update User
-func (c *Client) UpdateUser( user *User, id string)  error {
+func (c *Client) UpdateUser(ctx context.Context, user *User, id string)  error {
 	filter := bson.D{{"id", id}}
 	u := &User{}
 	us, err := flatbson.Flatten(user)
 	update := bson.M{
 		"$set": us,
 	}
-	 err = c.Client.Database("user").Collection("users").FindOneAndUpdate(context.Background(), filter, update).Decode(u)
+	err = c.Client.Database("user").Collection("users").FindOneAndUpdate(ctx, filter, update).Decode(u)
 	if err != nil {
 		if errs.IsNoSuchEntityError(err) {
 			return errs.ErrNoSuchEntity
@@ -115,4 +115,3 @@ func (c *Client) UpdateUser( user *User, id string)  error {
 	}
 	return nil
 }
-
