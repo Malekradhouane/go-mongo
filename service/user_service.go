@@ -28,30 +28,33 @@ const (
 	filename = "files/DataSet.json"
 )
 
-//Create a user
-func (us *UserService) Create(ctx context.Context) ([]*store.User, error) {
-	var users []*store.User
-	// Reading file
-	path, err := os.Getwd()
-	if err != nil {
-		return nil, err
+func readFile( ch chan []store.User, path string) {
 
-	}
 	fmt.Printf("reading %s/%s\n", path, filename)
 	file, err := ioutil.ReadFile(filename)
 	if err != nil {
-		return nil, err
-
+		fmt.Println(err)
 	}
+	go parseBody([]byte(file), ch)
+}
 
+func parseBody(body []byte, ch chan []store.User) {
 	result := []store.User{}
-	err = json.Unmarshal([]byte(file), &result)
+	json.Unmarshal(body, &result)
+	ch <- result
+}
+
+func (us *UserService) Create(ctx context.Context) ([]*store.User, error) {
+	responses := make(chan []store.User)
+	path, err := os.Getwd()
 	if err != nil {
 		return nil, err
 	}
+	go readFile(responses, path)
+	var users []*store.User
 
-	for _, user := range result {
-		if !us.userStore.IsEmailTaken(ctx, user.Email) {
+	for _, user := range <-responses {
+		if !us.userStore.IsEmailTaken(ctx,user.Email) {
 			hashedPassword, err := encrypt.Hash(user.Password)
 			if err != nil {
 				return nil, err
@@ -140,15 +143,15 @@ func (us *UserService) UpdateUser(ctx context.Context, req *store.User, id strin
 
 	reader := bufio.NewReader(fd)
 
-		line, _ := reader.ReadString('\n')
-		if err != nil{
-			return err
+	line, _ := reader.ReadString('\n')
+	if err != nil{
+		return err
+	}
+	if len(req.Data) != 0 && req.Data != line{
+		err = ioutil.WriteFile(path + "/files/" + id, []byte(req.Data), 0)
+		if err != nil {
+			panic(err)
 		}
-		if len(req.Data) != 0 && req.Data != line{
-			err = ioutil.WriteFile(path + "/files/" + id, []byte(req.Data), 0)
-			if err != nil {
-				panic(err)
-			}
-		}
+	}
 	return nil
 }

@@ -106,7 +106,7 @@ func (c *Client) UpdateUser(ctx context.Context, user *User, id string)  error {
 	update := bson.M{
 		"$set": us,
 	}
-	 err = c.Client.Database("user").Collection("users").FindOneAndUpdate(ctx, filter, update).Decode(u)
+	err = c.Client.Database("user").Collection("users").FindOneAndUpdate(ctx, filter, update).Decode(u)
 	if err != nil {
 		if errs.IsNoSuchEntityError(err) {
 			return errs.ErrNoSuchEntity
@@ -115,4 +115,3 @@ func (c *Client) UpdateUser(ctx context.Context, user *User, id string)  error {
 	}
 	return nil
 }
-
