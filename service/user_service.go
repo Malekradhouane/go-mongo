@@ -28,36 +28,39 @@ const (
 	filename = "files/DataSet.json"
 )
 
-//Create a user
-func (us *UserService) Create(ctx context.Context) ([]*store.User, error) {
-	var users []*store.User
-	// Reading file
-	path, err := os.Getwd()
-	if err != nil {
-		return nil, err
+func readFile( ch chan []store.User, path string) {
 
-	}
 	fmt.Printf("reading %s/%s\n", path, filename)
 	file, err := ioutil.ReadFile(filename)
 	if err != nil {
-		return nil, err
-
+		fmt.Println(err)
 	}
+	go parseBody([]byte(file), ch)
+}
 
+func parseBody(body []byte, ch chan []store.User) {
 	result := []store.User{}
-	err = json.Unmarshal([]byte(file), &result)
+	json.Unmarshal(body, &result)
+	ch <- result
+}
+
+func (us *UserService) Create(ctx context.Context) ([]*store.User, error) {
+	responses := make(chan []store.User)
+	path, err := os.Getwd()
 	if err != nil {
 		return nil, err
 	}
+	go readFile(responses, path)
+	var users []*store.User
 
-	for _, user := range result {
-		if !us.userStore.IsEmailTaken(ctx, user.Email) {
+	for _, user := range <-responses {
+		if !us.userStore.IsEmailTaken(user.Email) {
 			hashedPassword, err := encrypt.Hash(user.Password)
 			if err != nil {
 				return nil, err
 			}
 			user.Password = string(hashedPassword)
-			user, err := us.userStore.CreateUser(ctx, &user)
+			user, err := us.userStore.CreateUser(&user)
 			if err != nil {
 				return nil, err
 			}
@@ -85,7 +88,7 @@ func (us *UserService) Create(ctx context.Context) ([]*store.User, error) {
 
 //List users   _
 func (us *UserService) List(ctx context.Context) ([]*store.User, error) {
-	users, err := us.userStore.GetAllUsers(ctx)
+	users, err := us.userStore.GetAllUsers()
 	if err != nil {
 		return nil, err
 	}
@@ -93,8 +96,8 @@ func (us *UserService) List(ctx context.Context) ([]*store.User, error) {
 }
 
 //List users   _
-func (us *UserService) GetUser(ctx context.Context, id string) (*store.User, error) {
-	user, err := us.userStore.Get(ctx, id)
+func (us *UserService) GetUser( id string) (*store.User, error) {
+	user, err := us.userStore.Get(id)
 	if err != nil {
 		return nil, err
 	}
@@ -102,8 +105,8 @@ func (us *UserService) GetUser(ctx context.Context, id string) (*store.User, err
 }
 
 //Delete _
-func (us *UserService) DeleteUser(ctx context.Context, id string) error {
-	err := us.userStore.DeleteUser(ctx, id)
+func (us *UserService) DeleteUser( id string) error {
+	err := us.userStore.DeleteUser(id)
 	if err == nil {
 		// Reading file
 		path, err := os.Getwd()
@@ -121,8 +124,8 @@ func (us *UserService) DeleteUser(ctx context.Context, id string) error {
 }
 
 //Update a User
-func (us *UserService) UpdateUser(ctx context.Context, req *store.User, id string) error {
-	err := us.userStore.UpdateUser(ctx, req, id)
+func (us *UserService) UpdateUser( req *store.User, id string) error {
+	err := us.userStore.UpdateUser(req, id)
 	if err != nil {
 		return err
 	}

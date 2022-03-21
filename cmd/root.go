@@ -31,8 +31,8 @@ func start(cmd *cobra.Command, args []string) error {
 	models := []interface{}{
 		&store.User{},
 	}
-	db := mongo.ConnectDB(models)
 	dbCfg := dbConfig()
+	db := mongo.ConnectDB(dbCfg,models)
 
 	ctx, cancel := context.WithCancel(context.Background())
 
@@ -108,21 +108,17 @@ func dbConfig() *mongo.Config {
 	viper.BindEnv("db_host", "db_host")
 	viper.BindEnv("db_port", "db_port")
 	viper.BindEnv("db_user", "db_user")
-	viper.BindEnv("mongo_uri", "mongo_uri")
 	viper.BindEnv("db_pwd", "db_pwd")
 	viper.BindEnv("db_name", "db_name")
 	viper.BindEnv("db_socket", "db_socket")
-	viper.BindEnv("env", "env")
 
 	return &mongo.Config{
 		Host:     viper.GetString("db_host"),
 		Port:     viper.GetInt("db_port"),
-		URI:      viper.GetString("mongo_uri"),
 		DB:       viper.GetString("db_name"),
 		User:     viper.GetString("db_user"),
 		Password: viper.GetString("db_pwd"),
 		Socket:   viper.GetString("db_socket"),
-		Env:      viper.GetString("env"),
 	}
 }
 
