@@ -1,19 +1,14 @@
 version: 1
 
 before:
-  hooks: #execute custom commands or scripts on pre/post build pre/post release
+  # Templates for the commands to be ran.
+  hooks:
+    - make clean
+    - go generate ./...
     - go mod tidy
-    - name: Generate Changelog
-      commands:
-        - changelog-generator-script > changelog.txt
+    - ./generate_changelog.sh {{.Tag}} > message.txt
 
-    - name: Inject Changelog into Message
-      commands:
-        - export CHANGELOG_CONTENT=$(cat changelog.txt)
-        - export MESSAGE_TEMPLATE="iTower {{.Tag}} is out!\n\nChangelog:\n$CHANGELOG_CONTENT"
-        - echo "::set-output name=message::$MESSAGE_TEMPLATE"
-
-builds: #configure how the app will be built via GOOS/GOARCH/GOARM
+builds:
   - env:
       - CGO_ENABLED=0
     goos:
@@ -21,7 +16,7 @@ builds: #configure how the app will be built via GOOS/GOARCH/GOARM
       - windows
       - darwin
 
-archives: #customize the archive name, file, binary file produced by the build
+archives:
   - format: tar.gz
     name_template: >-
       {{ .ProjectName }}_
@@ -30,16 +25,13 @@ archives: #customize the archive name, file, binary file produced by the build
       {{- else if eq .Arch "386" }}i386
       {{- else }}{{ .Arch }}{{ end }}
       {{- if .Arm }}v{{ .Arm }}{{ end }}
-    # use zip for windows archives
     format_overrides:
       - goos: windows
         format: zip
 
-changelog: # identify any new features, edits, and bug fixes inherent in each new release
+changelog:
   use: github
-
   sort: asc
-
   groups:
     - title: Features
       regexp: '^.*?feat(\([[:word:]]+\))??!?:.+$'
@@ -52,49 +44,23 @@ changelog: # identify any new features, edits, and bug fixes inherent in each ne
       order: 2
     - title: Others
       order: 999
-
   filters:
     include:
       - "^feat"
       - "^bug"
       - "^release"
 
-# .goreleaser.yaml
 announce:
   slack:
-    # Whether its enabled or not.
     enabled: true
-
-    # Message template to use while publishing.
-    #
-    # Default: '{{ .ProjectName }} {{ .Tag }} is out! Check it out at {{ .ReleaseURL }}'
-    # Templates: allowed
     message_template: |
       iTower {{.Tag}} is out!
       
       Changelog:
       {{.Changelog}}
-
-    # The name of the channel that the user selected as a destination for webhook messages.
     channel: 'releases'
-
-    # Set your Webhook's user name.
     username: 'Goreleaser'
-
-    # Emoji to use as the icon for this message. Overrides icon_url.
     icon_emoji: ':rocket:'
-
-    # URL to an image to use as the icon for this message.
     icon_url: ''
-
-    # Blocks for advanced formatting, see: https://api.slack.com/messaging/webhooks#advanced_message_formatting
-    # and https://api.slack.com/messaging/composing/layouts#adding-blocks.
-    #
-    # Attention: goreleaser doesn't check the full structure of the Slack API: please make sure that
-    # your configuration for advanced message formatting abides by this API.
-    #
-    # Templates: allowed
     blocks: []
-
-
     attachments: []
