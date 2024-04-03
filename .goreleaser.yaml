@@ -3,7 +3,15 @@ version: 1
 before:
   hooks: #execute custom commands or scripts on pre/post build pre/post release
     - go mod tidy
-    - go generate ./...
+    - name: Generate Changelog
+      commands:
+        - changelog-generator-script > changelog.txt
+
+    - name: Inject Changelog into Message
+      commands:
+        - export CHANGELOG_CONTENT=$(cat changelog.txt)
+        - export MESSAGE_TEMPLATE="iTower {{.Tag}} is out!\n\nChangelog:\n$CHANGELOG_CONTENT"
+        - echo "::set-output name=message::$MESSAGE_TEMPLATE"
 
 builds: #configure how the app will be built via GOOS/GOARCH/GOARM
   - env:
