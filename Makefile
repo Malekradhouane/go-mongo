@@ -11,19 +11,23 @@ deploy:
 
 teardown:
 	docker-compose -f ./deploy/local/docker-compose.yml stop
-
+# Extract the current version from the latest tag
 CURRENT_VERSION := $(shell git describe --tags --abbrev=0)
 
+# Extract the branch name
 BRANCH_NAME := $(shell git rev-parse --abbrev-ref HEAD)
 
 # Increment version based on branch name prefix
-ifeq ($(findstring feature:,$(BRANCH_NAME)),feature:)
+ifeq ($(findstring feature,$(BRANCH_NAME)),feature)
   NEW_VERSION := $(shell echo $(CURRENT_VERSION) | awk -F. '{$$NF = $$NF + 1;} 1' | sed 's/^v//')
-else ifeq ($(findstring bug:,$(BRANCH_NAME)),bug:)
+else ifeq ($(findstring bug,$(BRANCH_NAME)),bug)
   NEW_VERSION := $(shell echo $(CURRENT_VERSION) | awk -F. '{$$(NF-1) = $$(NF-1) + 1;} 1' | sed 's/^v//')
 else
-  $(error Branch name does not start with 'feature' or 'bug')
+  $(error Branch name "$(BRANCH_NAME)" does not contain 'feature' or 'bug')
 endif
+
+# Remove spaces from the new version
+NEW_VERSION := $(shell echo $(NEW_VERSION) | sed 's/ //g')
 
 .PHONY: release
 release: tag goreleaser
