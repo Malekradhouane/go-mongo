@@ -69,10 +69,10 @@ announce:
     channel: 'releases'
 
     # Set your Webhook's user name.
-    username: 'release'
+    username: 'Goreleaser'
 
     # Emoji to use as the icon for this message. Overrides icon_url.
-    icon_emoji: ''
+    icon_emoji: ':rocket:'
 
     # URL to an image to use as the icon for this message.
     icon_url: ''
