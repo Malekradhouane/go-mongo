@@ -41,7 +41,7 @@ changelog: # identify any new features, edits, and bug fixes inherent in each ne
       order: 1
     - title: "Release"
       regexp: '^.*?release(\([[:word:]]+\))??!?:.+$'
-      order: 1
+      order: 2
     - title: Others
       order: 999
 
