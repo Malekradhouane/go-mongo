@@ -61,7 +61,11 @@ announce:
     #
     # Default: '{{ .ProjectName }} {{ .Tag }} is out! Check it out at {{ .ReleaseURL }}'
     # Templates: allowed
-    message_template: 'iTower {{.Tag}} is out!'
+    message_template: |
+      iTower {{.Tag}} is out!
+      
+      Changelog:
+      {{.Changelog}}
 
     # The name of the channel that the user selected as a destination for webhook messages.
     channel: 'releases'
