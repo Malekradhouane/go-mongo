@@ -22,7 +22,7 @@ ifeq ($(findstring feature:,$(BRANCH_NAME)),feature:)
 else ifeq ($(findstring bug:,$(BRANCH_NAME)),bug:)
   NEW_VERSION := $(shell echo $(CURRENT_VERSION) | awk -F. '{$$(NF-1) = $$(NF-1) + 1;} 1' | sed 's/^v//')
 else
-  $(error Branch name does not start with 'feature:' or 'bug:')
+  $(error Branch name does not start with 'feature' or 'bug')
 endif
 
 .PHONY: release
