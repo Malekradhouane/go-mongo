@@ -45,17 +45,6 @@ changelog: # identify any new features, edits, and bug fixes inherent in each ne
       order: 999
 
   filters:
-    # Commit messages matching the regexp listed here will be removed from
-    # the changelog
-    #
-    # Matches are performed against the first line of the commit message only,
-    # prefixed with the commit SHA1, usually in the form of
-    # `<abbrev-commit>[:] <title-commit>`.
-    exclude:
-      - "^docs:"
-      - typo
-      - (?i)foo
-
     # Commit messages matching the regexp listed here will be the only ones
     # added to the changelog
     #
@@ -68,6 +57,8 @@ changelog: # identify any new features, edits, and bug fixes inherent in each ne
     # Since: v1.19
     include:
       - "^feat"
+      - "^bug"
+      - "^release"
 
 # .goreleaser.yaml
 announce:
