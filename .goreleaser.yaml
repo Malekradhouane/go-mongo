@@ -3,7 +3,6 @@ version: 1
 before:
   # Templates for the commands to be ran.
   hooks:
-    - make clean
     - go generate ./...
     - go mod tidy
     - ./generate_changelog.sh {{.Tag}} > message.txt
