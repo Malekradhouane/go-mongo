@@ -59,11 +59,15 @@ announce:
     # Whether its enabled or not.
     enabled: true
 
-    # Message template to use while publishing.
-    #
-    # Default: '{{ .ProjectName }} {{ .Tag }} is out! Check it out at {{ .ReleaseURL }}'
-    # Templates: allowed
-    message_template: 'iTower {{.Tag}} is out!'
+
+    message_template: '|
+      iTower {{.Tag}} is out!
+      
+      {{if .Changelog}}
+      *Changelog:*
+      {{.Changelog}}
+      {{end}}
+
 
     # The name of the channel that the user selected as a destination for webhook messages.
     channel: 'releases'
@@ -76,15 +80,3 @@ announce:
 
     # URL to an image to use as the icon for this message.
     icon_url: ''
-
-    # Blocks for advanced formatting, see: https://api.slack.com/messaging/webhooks#advanced_message_formatting
-    # and https://api.slack.com/messaging/composing/layouts#adding-blocks.
-    #
-    # Attention: goreleaser doesn't check the full structure of the Slack API: please make sure that
-    # your configuration for advanced message formatting abides by this API.
-    #
-    # Templates: allowed
-    blocks: []
-
-
-    attachments: []

@@ -14,4 +14,4 @@ teardown:
 
 goreleaser:
 	@echo "Running Goreleaser..."
-	@goreleaser release --clean
+	goreleaser release --clean
