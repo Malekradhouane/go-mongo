@@ -1,4 +1,3 @@
-
 version: 1
 
 before:
@@ -31,7 +30,6 @@ archives: #customize the archive name, file, binary file produced by the build
 changelog: # identify any new features, edits, and bug fixes inherent in each new release
   use: github
 
-
   sort: asc
 
   groups:
@@ -43,7 +41,7 @@ changelog: # identify any new features, edits, and bug fixes inherent in each ne
       order: 1
     - title: "Release"
       regexp: '^.*?release(\([[:word:]]+\))??!?:.+$'
-      order: 1
+      order: 2
     - title: Others
       order: 999
 
