@@ -5,7 +5,7 @@ before:
   hooks:
     - go generate ./...
     - go mod tidy
-    - ./generate_changelog.sh {{.Tag}} > message.txt
+    - ./changelog.sh {{.Tag}} > message.txt
 
 builds:
   - env:
