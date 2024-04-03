@@ -34,7 +34,7 @@ release: tag goreleaser
 
 .PHONY: tag
 tag:
-ifeq ($(shell git tag -l $(NEW_VERSION)),)
+ifeq ($(strip $(shell git tag -l $(NEW_VERSION))),)
 	@echo "Tagging new version: v$(NEW_VERSION)"
 	@git tag -a v$(NEW_VERSION) -m "Version $(NEW_VERSION) release"
 	@git push origin v$(NEW_VERSION)
