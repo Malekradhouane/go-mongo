@@ -12,3 +12,4 @@ deploy:
 teardown:
 	docker-compose -f ./deploy/local/docker-compose.yml stop
 
+release:
