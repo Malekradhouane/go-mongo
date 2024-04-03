@@ -41,6 +41,9 @@ changelog: # identify any new features, edits, and bug fixes inherent in each ne
     - title: "Bug fixes"
       regexp: '^.*?bug(\([[:word:]]+\))??!?:.+$'
       order: 1
+    - title: "Release"
+      regexp: '^.*?release(\([[:word:]]+\))??!?:.+$'
+      order: 1
     - title: Others
       order: 999
 
