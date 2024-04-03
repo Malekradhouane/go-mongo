@@ -67,7 +67,7 @@ changelog: # identify any new features, edits, and bug fixes inherent in each ne
     #
     # Since: v1.19
     include:
-      - "^feat:"
+      - "^feat"
 
 # .goreleaser.yaml
 announce:
@@ -82,7 +82,7 @@ announce:
     message_template: 'iTower {{.Tag}} is out!'
 
     # The name of the channel that the user selected as a destination for webhook messages.
-    channel: 'Malek Radhouen'
+    channel: 'releases'
 
     # Set your Webhook's user name.
     username: 'release'
@@ -102,10 +102,5 @@ announce:
     # Templates: allowed
     blocks: []
 
-    # Attachments, see: https://api.slack.com/reference/messaging/attachments
-    #
-    # Attention: goreleaser doesn't check the full structure of the Slack API: please make sure that
-    # your configuration for advanced message formatting abides by this API.
-    #
-    # Templates: allowed
+
     attachments: []
