@@ -66,9 +66,9 @@ announce:
     message_template: |
       iTower {{.Tag}} is out!
       
-      {{if .Changelog}}
+      {{if .changelog}}
       *Changelog:*
-      {{.Changelog}}
+      {{.changelog}}
       {{end}}
 
     # The name of the channel that the user selected as a destination for webhook messages.
