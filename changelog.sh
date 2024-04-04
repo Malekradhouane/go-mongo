@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Run your changelog generator script and save the output to a file
-changelog-generator-script > changelog.txt
+changelog > changelog.txt
 
 # Read the changelog content from the file
 CHANGELOG_CONTENT=$(cat changelog.txt)

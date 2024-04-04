@@ -5,8 +5,6 @@ before:
   hooks:
     - go generate ./...
     - go mod tidy
-    - ./changelog.sh {{.Tag}} > message.txt
-
 builds:
   - env:
       - CGO_ENABLED=0
@@ -52,11 +50,7 @@ changelog:
 announce:
   slack:
     enabled: true
-    message_template: |
-      iTower {{.Tag}} is out!
-      
-      Changelog:
-      {{.Changelog}}
+    message_template: 'New Release: {{ .ProjectName }} {{.Tag}} is published! Check it out at {{ .ReleaseURL }} : \n{{.CHANGELOG.md} {{`cat CHANGELOG.md`}}'
     channel: 'releases'
     username: 'Goreleaser'
     icon_emoji: ':rocket:'
