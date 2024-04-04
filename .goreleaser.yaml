@@ -56,4 +56,4 @@ announce:
     icon_emoji: ':rocket:'
     icon_url: ''
     blocks: []
-    attachments: []
+    attachments: [CHANGELOG.md]
