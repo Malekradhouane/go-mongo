@@ -50,7 +50,7 @@ changelog:
 announce:
   slack:
     enabled: true
-    message_template: 'New Release: {{ .ProjectName }} {{.Tag}} is published! Check it out at {{ .ReleaseURL }} : \n{{.CHANGELOG.md}} `cat CHANGELOG.md`'
+    message_template: 'New Release: {{ .ProjectName }} {{.Tag}} is published! Check it out at {{ .ReleaseURL }} : \n `cat CHANGELOG.md`'
     channel: 'releases'
     username: 'Goreleaser'
     icon_emoji: ':rocket:'
