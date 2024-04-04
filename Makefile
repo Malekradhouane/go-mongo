@@ -12,6 +12,10 @@ deploy:
 teardown:
 	docker-compose -f ./deploy/local/docker-compose.yml stop
 
-goreleaser:
+release:
 	@echo "Running Goreleaser..."
 	goreleaser release --clean
+
+changelog:
+	@echo "Making changelog..."
+	goreleaser changelog
