@@ -4,7 +4,8 @@ branch_name=$(echo $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME | cut -d'/' -f 1)
 
 echo $branch_name
 
-x=$(git rev-parse --abbrev-ref HEAD)
+x=$(git describe --tags $(git rev-list --tags --max-count=1))
+
 echo $x
 
 

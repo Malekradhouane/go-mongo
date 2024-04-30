@@ -13,6 +13,7 @@ builds:
       - windows
       - darwin
 
+
 archives:
   - format: tar.gz
     name_template: >-
@@ -27,17 +28,17 @@ archives:
         format: zip
 
 changelog:
-  use: github
+  use: gitlab
   sort: asc
   groups:
-    - title: Features
-      regexp: '^.*?feat(\([[:word:]]+\))??!?:.+$'
+    - title: "Releases"
+      regexp: '^(release|Release|Merge|SYS)([-\/])?'
       order: 0
-    - title: "Bug fixes"
-      regexp: '^.*?bug(\([[:word:]]+\))??!?:.+$'
+    - title: Features
+      regexp: '^(feature|feat|Feat|Feature|Merge|SYS)([-\/])?'
       order: 1
-    - title: "Release"
-      regexp: '^.*?release(\([[:word:]]+\))??!?:.+$'
+    - title: "Bug fixes"
+      regexp: '^(fix|bug|Fix|Bug|Merge|SYS)([-\/])?'
       order: 2
     - title: Others
       order: 999
@@ -50,7 +51,7 @@ changelog:
 announce:
   slack:
     enabled: true
-    message_template: 'New Release: {{ .ProjectName }} {{.Tag}} is published! Check it out at {{ .ReleaseURL }} : \n {{.Changelog}}'
+    message_template: 'New Release: {{ .ProjectName }} {{.Tag}} is published! Check it out at {{ .ReleaseURL }}'
     channel: 'releases'
     username: 'Goreleaser'
     icon_emoji: ':rocket:'
