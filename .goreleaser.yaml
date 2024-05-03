@@ -28,25 +28,25 @@ archives:
         format: zip
 
 changelog:
-  use: gitlab
+  use: github
   sort: asc
   groups:
     - title: "Releases"
-      regexp: '^(release|Release|Merge|SYS)([-\/])?'
+      regexp: '(release|Release)'
       order: 0
     - title: Features
-      regexp: '^(feature|feat|Feat|Feature|Merge|SYS)([-\/])?'
+      regexp: '(feature|feat|Feat|Feature)'
       order: 1
     - title: "Bug fixes"
-      regexp: '^(fix|bug|Fix|Bug|Merge|SYS)([-\/])?'
+      regexp: '(fix|bug|Fix|Bug)'
       order: 2
     - title: Others
       order: 999
   filters:
     include:
-      - "^feat"
-      - "^bug"
-      - "^release"
+      - "(feature|feat|Feat|Feature)"
+      - "(fix|bug|Fix|Bug)"
+      - "(release|Release)"
 
 announce:
   slack:
